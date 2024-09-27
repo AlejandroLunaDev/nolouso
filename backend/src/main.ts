@@ -16,6 +16,7 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('Mi API Documentacion')
     .setDescription('The users API description') // Cambié "cats" por "users"
     .setVersion('1.0')
