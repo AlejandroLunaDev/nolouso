@@ -5,8 +5,9 @@ import {
   MinLength,
   IsOptional,
 } from 'class-validator';
+import { LoginAuthDto } from './login-auth.dto';
 
-export class CreateUserDto {
+export class RegisterAuthDto extends LoginAuthDto {
   @IsNotEmpty({ message: 'El nombre es obligatorio' })
   @IsString({ message: 'El nombre debe ser una cadena de texto' })
   first_name: string;
@@ -14,10 +15,6 @@ export class CreateUserDto {
   @IsOptional()
   @IsString({ message: 'El apellido debe ser una cadena de texto' })
   last_name?: string;
-
-  @IsOptional()
-  @IsString({ message: 'La edad debe ser una cadena de texto' })
-  age?: string; // Si es un número, considera usar un tipo numérico
 
   @IsEmail({}, { message: 'El correo electrónico no es válido' })
   @IsNotEmpty({ message: 'El correo electrónico es obligatorio' })
@@ -29,8 +26,6 @@ export class CreateUserDto {
   password: string;
 
   @IsOptional()
-  @IsString({ message: 'El DNI debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El DNI no puede estar vacío' })
-  dni?: string; // DNI es opcional pero único en la base de datos
-  // DNI es opcional pero único en la base de datos
+  @IsString({ message: 'La edad debe ser una cadena de texto' })
+  age?: string; // Cambia el tipo a number si decides que debe ser un número
 }
