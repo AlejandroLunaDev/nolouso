@@ -6,7 +6,8 @@ import { UserSchema, User } from 'src/users/schema/user.schema';
 import { UsersService } from 'src/users/users.service';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
-import { JwtStrategy } from './jwt/jwt.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { GoogleStrategy } from './strategies/google.strategy';
 dotenv.config();
 
 @Module({
@@ -19,6 +20,6 @@ dotenv.config();
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, JwtStrategy],
+  providers: [AuthService, UsersService, JwtStrategy, GoogleStrategy],
 })
 export class AuthModule {}

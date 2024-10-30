@@ -14,11 +14,16 @@ export class UsersService {
 
   // Crear un nuevo usuario
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    const newUser = new this.userModel({
+    const hashedPassword = createUserDto.password
+      ? await bcrypt.hash(createUserDto.password, 10)
+      : undefined;
+
+    const newUserData = {
       ...createUserDto,
-      password: hashedPassword,
-    });
+      ...(hashedPassword && { password: hashedPassword }), // Solo agrega password si está definido
+    };
+
+    const newUser = new this.userModel(newUserData);
     return await newUser.save();
   }
 

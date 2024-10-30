@@ -40,7 +40,7 @@ export class CreateUserDto {
     message:
       'password must contain at least one number, one uppercase letter, and one special character',
   }) // Requisitos de complejidad
-  password: string;
+  password?: string;
 
   @ApiProperty({
     example: 'https://randomuser.me/api/portraits/women/50.jpg',
