@@ -21,10 +21,12 @@ async function bootstrap() {
     .setDescription('The users API description') // Cambié "cats" por "users"
     .setVersion('1.0')
     .addTag('users')
+    .addTag('auth')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('documentation', app, document);
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(3000);
 }
