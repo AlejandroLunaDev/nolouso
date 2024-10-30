@@ -45,14 +45,15 @@ export class AuthService {
       first_name: user.first_name,
       last_name: user.last_name,
       role: user.role,
+      avatar: user.avatar,
     };
     const token = this.jwtService.sign(payload);
+    console.log(token);
     return { message: 'Inicio de sesión exitoso', token };
   }
 
   async googleLogin(profile: any) {
     const { email, firstName, lastName, profilePicture } = profile;
-    console.log('datos  de Google:', firstName);
 
     // Busca al usuario en la base de datos
     let user = await this.usersService.findByEmail(email);
@@ -63,21 +64,22 @@ export class AuthService {
         first_name: firstName,
         last_name: lastName,
         email,
-        password: '123Pa$word',
+        password: '123Pa$word', // Contraseña predeterminada, puedes ajustar esto
         avatar: profilePicture, // Foto de perfil de Google
         isPremium: false, // Configura según tu lógica de negocio
       };
-
-      console.log('Creando usuario con DTO con google:', createUserDto);
-
-      // Registrar al usuario
       user = await this.register(createUserDto);
+    } else {
+      // Si el usuario ya existe, lo loguea
+      const loginAuthDto: LoginAuthDto = {
+        email: email,
+        password: '123Pa$word', // Debes manejar esto con seguridad
+      };
+      return await this.login(loginAuthDto);
     }
 
-    // Crea el payload para el JWT
-    const payload = { email: user.email };
-    const token = this.jwtService.sign(payload);
+    // Si se crea el usuario, generamos el token
 
-    return { message: 'Inicio de sesión con Google exitoso', token, user };
+    return { message: 'Inicio de sesión con Google exitoso' };
   }
 }

@@ -50,7 +50,7 @@ export class AuthController {
     await this.authService.googleLogin(profile);
 
     return {
-      url: 'http://localhost:3000',
+      url: 'http://localhost:3000/documentation#/',
       statusCode: 302,
     };
     // Aquí puedes manejar el redireccionamiento después de un login exitoso
