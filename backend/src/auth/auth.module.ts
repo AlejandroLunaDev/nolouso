@@ -3,11 +3,11 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema, User } from 'src/users/schema/user.schema';
-import { UsersService } from 'src/users/users.service';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { UsersModule } from 'src/users/users.module';
 dotenv.config();
 
 @Module({
@@ -18,8 +18,9 @@ dotenv.config();
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '10h' },
     }),
+    UsersModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, JwtStrategy, GoogleStrategy],
+  providers: [AuthService, JwtStrategy, GoogleStrategy],
 })
 export class AuthModule {}
