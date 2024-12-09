@@ -9,6 +9,7 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
+import { Response } from 'express';
 dotenv.config();
 
 @Injectable()
@@ -30,7 +31,7 @@ export class AuthService {
   }
 
   // Método de login normal
-  async login(loginAuthDto: LoginAuthDto) {
+  async login(loginAuthDto: LoginAuthDto, res: Response) {
     const user = await this.usersService.findByEmail(loginAuthDto.email);
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
@@ -47,12 +48,17 @@ export class AuthService {
       role: user.role,
       avatar: user.avatar,
     };
-    const token = this.jwtService.sign(payload);
-    console.log(token);
-    return { message: 'Inicio de sesión exitoso', token };
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+
+    // Establece las cookies
+    res.cookie('accessToken', accessToken, { httpOnly: true, secure: false });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: false });
+
+    return { message: 'Inicio de sesión exitoso' };
   }
 
-  async googleLogin(profile: any) {
+  async googleLogin(profile: any, res: Response) {
     const { email, firstName, lastName, profilePicture } = profile;
 
     // Busca al usuario en la base de datos
@@ -75,7 +81,7 @@ export class AuthService {
         email: email,
         password: '123Pa$word', // Debes manejar esto con seguridad
       };
-      return await this.login(loginAuthDto);
+      return await this.login(loginAuthDto, res);
     }
 
     // Si se crea el usuario, generamos el token

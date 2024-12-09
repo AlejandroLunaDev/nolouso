@@ -2,6 +2,14 @@ import Image from 'next/image'
 
 export default function Logo() {
   return (
-    <Image src="/images/logoWhite.webp" alt="logo" width={150} height={150} />
+    <div className="relative w-[150px] h-[50px]">
+      <Image 
+        src="/images/logoWhite.webp" 
+        alt="logo" 
+        fill
+        priority
+        className="object-contain"
+      />
+    </div>
   )
 }

@@ -8,12 +8,14 @@ import {
   Req,
   UseGuards,
   Redirect,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -28,31 +30,27 @@ export class AuthController {
   }
 
   @Post('login')
-  @HttpCode(HttpStatus.OK) // Establece el código de estado a 200
+  @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: 200, description: 'Inicio de sesión exitoso.' })
   @ApiResponse({ status: 401, description: 'Credenciales inválidas.' })
-  async loginUser(@Body() loginAuthDto: LoginAuthDto) {
-    return await this.authService.login(loginAuthDto);
+  async loginUser(@Body() loginAuthDto: LoginAuthDto, @Res() res: Response) {
+    return await this.authService.login(loginAuthDto, res);
   }
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleLogin(): Promise<any> {}
 
-  // Callback que Google llama después de autenticar al usuario
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
   @Redirect('http://localhost:3000', 302)
-  async googleLoginRedirect(@Req() req: any) {
-    const profile = req.user; // Aquí, 'user' se establece por el guard de Google
+  async googleLoginRedirect(@Req() req: any, @Res() res: Response) {
+    const profile = req.user;
 
     // Llama al servicio de autenticación para manejar el inicio de sesión
-    await this.authService.googleLogin(profile);
+    await this.authService.googleLogin(profile, res);
 
-    return {
-      url: 'http://localhost:3000/documentation#/',
-      statusCode: 302,
-    };
-    // Aquí puedes manejar el redireccionamiento después de un login exitoso
+    // Redirige al frontend con los tokens en las cookies
+    return { url: 'http://localhost:3000' };
   }
 }
