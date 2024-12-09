@@ -1,68 +1,82 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserDocument } from './schema/users.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { User, UserDocument } from './schema/user.schema';
+import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
+import { CartService } from 'src/cart/cart.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('User') private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    private readonly CartService: CartService,
+  ) {}
 
+  // Crear un nuevo usuario
   async create(createUserDto: CreateUserDto): Promise<User> {
-    // Hashear la contraseña
-    const saltRounds = 10; // Puedes ajustar la cantidad de rondas de sal
-    const hashedPassword = await bcrypt.hash(
-      createUserDto.password,
-      saltRounds,
-    );
+    const hashedPassword = createUserDto.password
+      ? await bcrypt.hash(createUserDto.password, 10)
+      : undefined;
 
-    // Crear un nuevo usuario con la contraseña hasheada
-    const createdUser = new this.userModel({
+    const newUserData = {
       ...createUserDto,
-      password: hashedPassword,
-    });
+      ...(hashedPassword && { password: hashedPassword }), // Solo agrega password si está definido
+    };
 
-    return await createdUser.save();
+    const newUser = new this.userModel(newUserData);
+    console.log(newUser);
+    const savedUser = await newUser.save();
+    // Crear un carrito asociado al nuevo usuario
+    await this.CartService.create({
+      userId: savedUser._id.toString(),
+      products: [],
+    });
+    // Asegúrate de pasar el usuario al DTO del carrito
+
+    return savedUser;
   }
 
+  // Obtener todos los usuarios
   async findAll(): Promise<User[]> {
     return await this.userModel.find().exec();
   }
 
+  // Obtener un usuario por ID
   async findOne(id: string): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
     }
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    // Si la contraseña se está actualizando, hashearla
-    if (updateUserDto.password) {
-      const saltRounds = 10;
-      updateUserDto.password = await bcrypt.hash(
-        updateUserDto.password,
-        saltRounds,
-      );
-    }
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.userModel.findOne({ email }).exec();
+  }
 
+  // Actualizar un usuario
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const updatedUser = await this.userModel
       .findByIdAndUpdate(id, updateUserDto, { new: true })
       .exec();
     if (!updatedUser) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
     }
     return updatedUser;
   }
 
-  async remove(id: string): Promise<User> {
-    const user = await this.userModel.findByIdAndDelete(id).exec();
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+  // Eliminar un usuario
+  async remove(id: string): Promise<void> {
+    const cart = await this.CartService.findByUserId(id);
+
+    if (cart) {
+      await this.CartService.remove(cart._id.toString());
     }
-    return user;
+    const result = await this.userModel.findByIdAndDelete(id).exec();
+    if (!result) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
   }
 }

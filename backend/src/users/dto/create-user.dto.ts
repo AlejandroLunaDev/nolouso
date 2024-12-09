@@ -2,35 +2,57 @@ import {
   IsEmail,
   IsNotEmpty,
   IsString,
-  MinLength,
+  IsBoolean,
+  Length,
   IsOptional,
+  IsUrl,
+  Matches,
 } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
-  @IsNotEmpty({ message: 'El nombre es obligatorio' })
-  @IsString({ message: 'El nombre debe ser una cadena de texto' })
+  @ApiProperty({ example: 'Laura' })
+  @IsString()
+  @IsNotEmpty()
+  @Length(1, 50) // Longitud máxima de 50 caracteres
+  @Matches(/^[A-Za-zÀ-ÿ]+$/, {
+    message: 'first_name must contain only letters',
+  }) // Solo letras
   first_name: string;
 
-  @IsOptional()
-  @IsString({ message: 'El apellido debe ser una cadena de texto' })
-  last_name?: string;
+  @ApiProperty({ example: 'Martínez' })
+  @IsString()
+  @IsNotEmpty()
+  @Length(1, 50) // Longitud máxima de 50 caracteres
+  @Matches(/^[A-Za-zÀ-ÿ]+$/, { message: 'last_name must contain only letters' }) // Solo letras
+  last_name: string;
 
-  @IsOptional()
-  @IsString({ message: 'La edad debe ser una cadena de texto' })
-  age?: string; // Si es un número, considera usar un tipo numérico
-
-  @IsEmail({}, { message: 'El correo electrónico no es válido' })
-  @IsNotEmpty({ message: 'El correo electrónico es obligatorio' })
+  @ApiProperty({ example: 'laura.martinez@example.com' })
+  @IsEmail()
+  @IsNotEmpty()
   email: string;
 
-  @IsNotEmpty({ message: 'La contraseña es obligatoria' })
-  @IsString({ message: 'La contraseña debe ser una cadena de texto' })
-  @MinLength(6, { message: 'La contraseña debe tener al menos 6 caracteres' })
-  password: string;
+  @ApiProperty({ example: '123Pa$word' })
+  @IsString()
+  @IsNotEmpty()
+  @Length(8, 100) // Longitud mínima de 8 caracteres
+  @Matches(/(?=.*[0-9])(?=.*[A-Z])(?=.*[!@#$%^&*])/, {
+    message:
+      'password must contain at least one number, one uppercase letter, and one special character',
+  }) // Requisitos de complejidad
+  password?: string;
 
+  @ApiProperty({
+    example: 'https://randomuser.me/api/portraits/women/50.jpg',
+    required: false,
+  })
   @IsOptional()
-  @IsString({ message: 'El DNI debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El DNI no puede estar vacío' })
-  dni?: string; // DNI es opcional pero único en la base de datos
-  // DNI es opcional pero único en la base de datos
+  @IsString()
+  @IsUrl({}, { message: 'avatar must be a valid URL' }) // Validar URL
+  avatar?: string;
+
+  @ApiProperty({ example: false, required: false })
+  @IsOptional()
+  @IsBoolean()
+  isPremium?: boolean;
 }
