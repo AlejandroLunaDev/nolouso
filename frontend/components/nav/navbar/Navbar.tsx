@@ -4,22 +4,25 @@ import { UserLogin } from '@/components/auth/UserLogin';
 import NavLinks from './NavLinks';
 import Logo from './Logo';
 import NavbarMobile from './mobile/NavbarMobile';
+import { FavoritesMenu } from './FavoritesMenu';
+import { useAuth } from '@/lib/hooks/useAuth';
 
-export default function Navbar({ auth }:{auth: React.ReactNode}) {
-  const menu = navlinks.map((link, index) => {
-    return <NavLinks key={index} href={link.href} label={link.label} />;
-  });
-
+export default function Navbar({ auth }: { auth: React.ReactNode }) {
+  const { user } = useAuth();
+  
   return (
     <header className='fixed top-0 left-0 w-full bg-black/50 backdrop-blur-md border-b border-white/10 p-4 lg:p-6 z-40'>
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-4 lg:gap-10 flex-1'>
           <Logo />
           <nav className='hidden lg:flex items-center gap-6 uppercase font-semibold'>
-            {menu}
+            {navlinks.map((link, index) => (
+              <NavLinks key={index} href={link.href} label={link.label} />
+            ))}
           </nav>
         </div>
         <div className='flex items-center gap-4'>
+          {user && <FavoritesMenu />}
           <UserLogin />
           <div className='lg:hidden'>
             <NavbarMobile />

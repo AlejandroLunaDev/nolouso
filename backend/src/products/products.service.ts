@@ -4,12 +4,15 @@ import { Model, Types } from 'mongoose';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product, ProductDocument } from './schema/products.schema';
+import { User, UserDocument } from '../users/schema/user.schema';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectModel(Product.name)
     private readonly productModel: Model<ProductDocument>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<UserDocument>,
   ) {}
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
@@ -61,28 +64,69 @@ export class ProductsService {
   }
 
   async toggleFavorite(productId: string, userId: string): Promise<Product> {
-    const product = await this.productModel.findById(productId);
-    if (!product) {
-      throw new NotFoundException('Producto no encontrado');
+    try {
+      const product = await this.productModel.findById(productId);
+      if (!product) {
+        throw new NotFoundException('Producto no encontrado');
+      }
+
+      const user = await this.userModel.findById(userId);
+      if (!user) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
+      const userObjectId = new Types.ObjectId(userId);
+      const productObjectId = new Types.ObjectId(productId);
+      
+      const userLikedIndex = product.likedBy.findIndex((id) =>
+        id.equals(userObjectId)
+      );
+
+      if (userLikedIndex === -1) {
+        // Añadir a favoritos
+        product.likedBy.push(userObjectId);
+        product.likes += 1;
+        
+        // Actualizar favoritos del usuario
+        if (!user.favorites) {
+          user.favorites = [];
+        }
+        if (!user.favorites.some(favId => favId.toString() === productId)) {
+          user.favorites.push(productObjectId as any);
+        }
+        await user.save();
+      } else {
+        // Quitar de favoritos
+        product.likedBy.splice(userLikedIndex, 1);
+        product.likes -= 1;
+        
+        // Remover de favoritos del usuario
+        user.favorites = user.favorites.filter(
+          favId => favId.toString() !== productId
+        );
+        await user.save();
+      }
+
+      return await product.save();
+    } catch (error) {
+      console.error('Error en toggleFavorite:', error);
+      throw error;
     }
-
-    const userObjectId = new Types.ObjectId(userId);
-    const userLikedIndex = product.likedBy.findIndex((id) =>
-      id.equals(userObjectId),
-    );
-
-    if (userLikedIndex === -1) {
-      product.likedBy.push(userObjectId);
-      product.likes += 1;
-    } else {
-      product.likedBy.splice(userLikedIndex, 1);
-      product.likes -= 1;
-    }
-
-    return product.save();
   }
 
   async getUserFavorites(userId: string): Promise<Product[]> {
-    return this.productModel.find({ likedBy: userId }).exec();
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    
+    // Obtener los productos favoritos del usuario
+    const favorites = await this.productModel
+      .find({
+        _id: { $in: user.favorites }
+      })
+      .exec();
+
+    return favorites;
   }
 }

@@ -10,6 +10,7 @@ import {
   HttpStatus,
   UseGuards,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -26,6 +27,26 @@ export class ProductsController {
   @Get('favorites')
   async getFavorites() {
     return this.productsService.getFavorites();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('user-favorites')
+  async getUserFavorites(@Req() req: any) {
+    const userId = req.user.id;
+    if (!userId) {
+      throw new UnauthorizedException('Usuario no autenticado');
+    }
+    return this.productsService.getUserFavorites(userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('favorite/:id')
+  async toggleFavorite(@Param('id') id: string, @Req() req: any) {
+    const userId = req.user.id;
+    if (!userId) {
+      throw new UnauthorizedException('Usuario no autenticado');
+    }
+    return this.productsService.toggleFavorite(id, userId);
   }
 
   @Post()
@@ -61,17 +82,5 @@ export class ProductsController {
   @ApiResponse({ status: 404, description: 'Product not found.' })
   remove(@Param('id') id: string) {
     return this.productsService.remove(id);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('favorite/:id')
-  async toggleFavorite(@Param('id') id: string, @Req() req: any) {
-    return this.productsService.toggleFavorite(id, req.user.id);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('user-favorites')
-  async getUserFavorites(@Req() req: any) {
-    return this.productsService.getUserFavorites(req.user.id);
   }
 }

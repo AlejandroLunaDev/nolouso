@@ -42,6 +42,7 @@ export class AuthService {
     if (!isPasswordValid) throw new NotFoundException('Credenciales inválidas');
 
     const payload = {
+      sub: user.id,
       email: user.email,
       first_name: user.first_name,
       last_name: user.last_name,
@@ -60,31 +61,38 @@ export class AuthService {
 
   async googleLogin(profile: any, res: Response) {
     const { email, firstName, lastName, profilePicture } = profile;
-
-    // Busca al usuario en la base de datos
     let user = await this.usersService.findByEmail(email);
 
-    // Si el usuario no existe, lo crea
     if (!user) {
+      // Si el usuario no existe, lo creamos
       const createUserDto: CreateUserDto = {
         first_name: firstName,
         last_name: lastName,
         email,
-        password: '123Pa$word', // Contraseña predeterminada, puedes ajustar esto
-        avatar: profilePicture, // Foto de perfil de Google
-        isPremium: false, // Configura según tu lógica de negocio
+        password: await bcrypt.hash(Math.random().toString(36), 10), // Contraseña aleatoria segura
+        avatar: profilePicture,
+        isPremium: false,
+        favorites: [],
       };
+
       user = await this.register(createUserDto);
-    } else {
-      // Si el usuario ya existe, lo loguea
-      const loginAuthDto: LoginAuthDto = {
-        email: email,
-        password: '123Pa$word', // Debes manejar esto con seguridad
-      };
-      return await this.login(loginAuthDto, res);
     }
 
-    // Si se crea el usuario, generamos el token
+    // Generamos los tokens y establecemos las cookies
+    const payload = {
+      sub: user._id.toString(),
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      role: user.role,
+      avatar: user.avatar,
+    };
+
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+
+    res.cookie('accessToken', accessToken, { httpOnly: true, secure: false });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: false });
 
     return { message: 'Inicio de sesión con Google exitoso' };
   }

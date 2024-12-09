@@ -1,24 +1,25 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 
 export async function POST() {
   try {
-    const cookieStore = cookies();
-    
-    // Eliminar las cookies estableciendo una fecha de expiración en el pasado
-    cookieStore.delete('accessToken');
-    cookieStore.delete('refreshToken');
+    const response = NextResponse.json(
+      { message: 'Logout successful' },
+      { status: 200 }
+    );
 
-    return NextResponse.json({ message: 'Logout successful' }, { 
-      status: 200,
-      headers: {
-        'Set-Cookie': [
-          'accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
-          'refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
-        ]
-      }
+    response.cookies.set('accessToken', '', {
+      expires: new Date(0),
+      path: '/',
     });
+    
+    response.cookies.set('refreshToken', '', {
+      expires: new Date(0),
+      path: '/',
+    });
+
+    return response;
   } catch (error) {
+    console.error('Error during logout:', error);
     return NextResponse.json({ error: 'Error during logout' }, { status: 500 });
   }
 } 

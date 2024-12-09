@@ -7,8 +7,10 @@ import {
   IsOptional,
   IsUrl,
   Matches,
+  IsArray,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'Laura' })
@@ -55,4 +57,14 @@ export class CreateUserDto {
   @IsOptional()
   @IsBoolean()
   isPremium?: boolean;
+
+  @ApiProperty()
+  @IsArray()
+  @IsOptional()
+  documents?: string[];
+
+  @ApiProperty()
+  @IsArray()
+  @IsOptional()
+  favorites?: Types.ObjectId[];
 }
