@@ -16,16 +16,23 @@ export function UserMenu() {
 
   if (!user) return null;
 
+  const initials = `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`;
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger className="flex items-center space-x-2 hover:opacity-80">
         <Avatar className="h-8 w-8">
           <AvatarImage src={user.avatar} alt={user.firstName} />
-          <AvatarFallback>{user.firstName[0]}{user.lastName[0]}</AvatarFallback>
+          <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
-        <span className="text-sm font-medium">{user.firstName}</span>
+        <span className="text-sm text-white font-medium">{user.firstName}</span>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent 
+        align="end" 
+        className="w-56" 
+        sideOffset={8}
+        style={{ zIndex: 50 }}
+      >
         <DropdownMenuItem className="flex items-center" onClick={logout}>
           Cerrar sesión
         </DropdownMenuItem>

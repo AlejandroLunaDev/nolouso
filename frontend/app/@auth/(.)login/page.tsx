@@ -1,5 +1,5 @@
 import { Login } from "@/components/auth/login/Login";
 
-export default function LoginPage() {
+export default function InterceptedLoginPage() {
   return <Login />;
 } 

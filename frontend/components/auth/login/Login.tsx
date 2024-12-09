@@ -6,27 +6,21 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function Login() {
-  const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    setOpen(true);
+    setMounted(true);
   }, []);
 
-  const handleGoogleLogin = async () => {
-    try {
-      // Redirige al endpoint de autenticación de Google en el backend
-      window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
-    } catch (error) {
-      console.error('Error durante la autenticación de Google:', error);
-    }
-  };
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <Dialog
-      open={open}
+      open={true}
       onOpenChange={(isOpen) => {
-        setOpen(isOpen);
         if (!isOpen) router.back();
       }}
     >
@@ -40,7 +34,9 @@ export function Login() {
           <div className="space-y-2">
             <SocialLoginButton
               provider="Google"
-              onClick={handleGoogleLogin}
+              onClick={() => {
+                window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+              }}
             />
             <SocialLoginButton
               provider="GitHub"

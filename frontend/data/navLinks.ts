@@ -5,7 +5,7 @@ export const navlinks = [
     },
     {
         label: 'productos',
-        href: '#shop',
+        href: '/shop',
     },
     {
         label: 'chat',

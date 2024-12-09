@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import NavbarDescktop from "@/components/nav/navbarDescktop/NavbarDescktop";
-
+import Navbar from "@/components/nav/navbar/Navbar";
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -10,16 +10,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  auth
-}: Readonly<{
+  auth,
+}: {
   children: React.ReactNode;
-  auth: React.ReactNode
-}>) {
+  auth: React.ReactNode;
+}) {
   return (
-    <html lang="en">
-      <body>
-        <NavbarDescktop auth={auth} />
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Navbar auth={auth} />
+          {auth}
+          {children}
+        </Suspense>
       </body>
     </html>
   );

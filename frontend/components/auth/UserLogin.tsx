@@ -5,10 +5,20 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { UserMenu } from './UserMenu';
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect, useState } from 'react';
 
 export function UserLogin() {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   if (loading) {
     return (
@@ -24,14 +34,12 @@ export function UserLogin() {
   }
 
   return (
-    <div className="flex space-x-2">
-      <Button 
-        variant="outline" 
-        onClick={() => router.push('/login')}
-        className="min-w-[100px]"
-      >
-        Iniciar sesión
-      </Button>
-    </div>
+    <Button 
+      variant="home" 
+      onClick={() => router.push('/login')}
+      className="min-w-[100px] text-md uppercase"
+    >
+      Iniciar sesión
+    </Button>
   );
 }
