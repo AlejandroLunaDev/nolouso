@@ -16,6 +16,8 @@
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "embla-carousel-autoplay": "^8.5.1",
+    "embla-carousel-react": "^8.5.1",
     "framer-motion": "^11.13.1",
     "hamburger-react": "^2.5.1",
     "jwt-decode": "^4.0.0",

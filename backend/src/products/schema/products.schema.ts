@@ -39,6 +39,12 @@ export class Product {
 
   @Prop({ type: String, ref: 'users', default: 'admin' })
   owner: string;
+
+  @Prop({ type: Number, default: 0 })
+  likes: number;
+
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }])
+  likedBy: mongoose.Types.ObjectId[];
 }
 
 const ProductSchema = SchemaFactory.createForClass(Product);
