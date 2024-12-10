@@ -17,7 +17,6 @@ export async function GET() {
           'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
         cache: 'no-store'
       }
     );
@@ -31,7 +30,7 @@ export async function GET() {
 
     const data = await response.json();
     return NextResponse.json(data);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Error fetching favorites' },
       { status: 500 }

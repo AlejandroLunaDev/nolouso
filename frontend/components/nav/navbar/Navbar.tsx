@@ -1,15 +1,13 @@
-'use client'
+'use client';
+
 import { navlinks } from '@/data/navLinks';
 import { UserLogin } from '@/components/auth/UserLogin';
 import NavLinks from './NavLinks';
 import Logo from './Logo';
 import NavbarMobile from './mobile/NavbarMobile';
 import { FavoritesMenu } from './FavoritesMenu';
-import { useAuth } from '@/lib/hooks/useAuth';
 
 export default function Navbar({ auth }: { auth: React.ReactNode }) {
-  const { user } = useAuth();
-  
   return (
     <header className='fixed top-0 left-0 w-full bg-black/50 backdrop-blur-md border-b border-white/10 p-4 lg:p-6 z-40'>
       <div className='flex items-center justify-between'>
@@ -22,7 +20,7 @@ export default function Navbar({ auth }: { auth: React.ReactNode }) {
           </nav>
         </div>
         <div className='flex items-center gap-4'>
-          {user && <FavoritesMenu />}
+          <FavoritesMenu />
           <UserLogin />
           <div className='lg:hidden'>
             <NavbarMobile />
@@ -32,4 +30,4 @@ export default function Navbar({ auth }: { auth: React.ReactNode }) {
       </div>
     </header>
   );
-} 
+}

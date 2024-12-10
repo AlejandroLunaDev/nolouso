@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/nav/navbar/Navbar";
 import { Suspense } from 'react';
+import { FavoritesProvider } from "@/providers/FavoritesProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,9 +20,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <Suspense fallback={<div>Loading...</div>}>
+        <FavoritesProvider>
+
           <Navbar auth={auth} />
           {auth}
           {children}
+        </FavoritesProvider>
         </Suspense>
       </body>
     </html>

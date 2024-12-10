@@ -35,7 +35,7 @@ export function UserLogin() {
 
   return (
     <Button 
-      variant="home" 
+      variant="default" 
       onClick={() => router.push('/login')}
       className="min-w-[100px] text-md uppercase"
     >

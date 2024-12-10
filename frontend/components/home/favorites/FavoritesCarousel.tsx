@@ -1,7 +1,7 @@
 'use client';
 
 import { FrontendProduct } from '@/lib/adapters/types/products';
-import { ProductCard } from './ProductCard';
+import { ProductCard } from '../../shared/ProductCard';
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from 'react';

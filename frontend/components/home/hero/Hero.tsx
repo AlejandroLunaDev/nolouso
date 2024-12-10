@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Hero() {
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div className="relative w-full h-[70dvh] overflow-hidden">
       <video
         className="absolute top-0 left-0 w-full h-full object-cover"
         autoPlay
