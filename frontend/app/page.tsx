@@ -1,9 +1,8 @@
-import Home from "@/components/home/Home";
+import Home from '@/features/home/Home'
+import React from 'react'
 
-export default function HomePage() {
+export default function Homepage() {
   return (
-    <div>
-      <Home />
-    </div>
-  );
+    <Home />
+  )
 }

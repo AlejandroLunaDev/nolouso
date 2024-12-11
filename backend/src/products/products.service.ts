@@ -77,21 +77,21 @@ export class ProductsService {
 
       const userObjectId = new Types.ObjectId(userId);
       const productObjectId = new Types.ObjectId(productId);
-      
+
       const userLikedIndex = product.likedBy.findIndex((id) =>
-        id.equals(userObjectId)
+        id.equals(userObjectId),
       );
 
       if (userLikedIndex === -1) {
         // Añadir a favoritos
         product.likedBy.push(userObjectId);
         product.likes += 1;
-        
+
         // Actualizar favoritos del usuario
         if (!user.favorites) {
           user.favorites = [];
         }
-        if (!user.favorites.some(favId => favId.toString() === productId)) {
+        if (!user.favorites.some((favId) => favId.toString() === productId)) {
           user.favorites.push(productObjectId as any);
         }
         await user.save();
@@ -99,10 +99,10 @@ export class ProductsService {
         // Quitar de favoritos
         product.likedBy.splice(userLikedIndex, 1);
         product.likes -= 1;
-        
+
         // Remover de favoritos del usuario
         user.favorites = user.favorites.filter(
-          favId => favId.toString() !== productId
+          (favId) => favId.toString() !== productId,
         );
         await user.save();
       }
@@ -119,11 +119,11 @@ export class ProductsService {
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
-    
+
     // Obtener los productos favoritos del usuario
     const favorites = await this.productModel
       .find({
-        _id: { $in: user.favorites }
+        _id: { $in: user.favorites },
       })
       .exec();
 
