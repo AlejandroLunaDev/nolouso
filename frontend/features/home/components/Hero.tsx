@@ -8,8 +8,24 @@ export function Hero() {
   const router = useRouter();
 
   return (
-    <section className='min-h-screen flex items-center justify-center bg-black/90 text-white px-4'>
-      <div className='max-w-4xl mx-auto text-center'>
+    <section className='min-h-[60vh] relative flex items-center justify-center text-white px-4'>
+      {/* Video de fondo */}
+      <div className='absolute inset-0 w-full h-full overflow-hidden'>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className='w-full h-full object-cover z-50'
+        >
+          <source src="/videos/Herovideo.mp4" type="video/mp4" />
+        </video>
+        {/* Overlay para mejorar la legibilidad del texto */}
+        <div className='absolute inset-0 bg-black/60' />
+      </div>
+
+      {/* Contenido */}
+      <div className='max-w-4xl mx-auto text-center relative z-10'>
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

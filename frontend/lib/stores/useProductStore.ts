@@ -9,6 +9,7 @@ interface Product {
   stock: number;
   status: boolean;
   category: string;
+  createdAt: string;
 }
 
 interface ProductStore {

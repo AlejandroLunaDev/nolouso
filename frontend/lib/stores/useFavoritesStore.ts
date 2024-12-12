@@ -50,63 +50,53 @@ export const useFavoritesStore = create<FavoritesStore>((set, get) => ({
   },
 
   toggleFavorite: async (productId: string) => {
-    try {
-      const currentFavorites = get().favorites;
-      const currentAllFavorites = get().allFavorites;
-      
-      // Actualizar optimistamente
-      const isCurrentlyFavorite = currentFavorites.some(fav => fav._id === productId);
-      
-      if (isCurrentlyFavorite) {
-        // Remover de favorites
-        set({ 
-          favorites: currentFavorites.filter(fav => fav._id !== productId)
-        });
-        
-        // Actualizar likes en allFavorites
-        set({
-          allFavorites: currentAllFavorites.map(fav => 
-            fav._id === productId 
-              ? { ...fav, likes: fav.likes - 1 }
-              : fav
-          )
-        });
-      } else {
-        // Agregar a favorites
-        const productToAdd = currentAllFavorites.find(fav => fav._id === productId);
-        if (productToAdd) {
-          set({ 
-            favorites: [...currentFavorites, productToAdd]
-          });
-          
-          // Actualizar likes en allFavorites
-          set({
-            allFavorites: currentAllFavorites.map(fav => 
-              fav._id === productId 
-                ? { ...fav, likes: fav.likes + 1 }
-                : fav
-            )
-          });
-        }
-      }
+    const currentState = get();
+    const isCurrentlyFavorite = currentState.favorites.some(fav => fav._id === productId);
+    const productToToggle = currentState.allFavorites.find(p => p._id === productId);
 
-      // Hacer la petición al servidor
+    if (!productToToggle) return;
+
+    // Actualización optimista inmediata
+    if (isCurrentlyFavorite) {
+      // Remover de favoritos
+      set({
+        favorites: currentState.favorites.filter(f => f._id !== productId),
+        allFavorites: currentState.allFavorites.map(p => 
+          p._id === productId ? { ...p, likes: p.likes - 1 } : p
+        )
+      });
+    } else {
+      // Agregar a favoritos
+      set({
+        favorites: [...currentState.favorites, productToToggle],
+        allFavorites: currentState.allFavorites.map(p => 
+          p._id === productId ? { ...p, likes: p.likes + 1 } : p
+        )
+      });
+    }
+
+    try {
+      // Realizar la petición en segundo plano
       await fetchWithInterceptor(`/api/products/favorites/${productId}`, {
         method: 'POST'
       });
-      
-      // Opcional: Sincronizar con el servidor en caso de error
-      await Promise.all([
-        get().fetchUserFavorites(),
-        get().fetchFavorites()
-      ]);
     } catch {
-      // En caso de error, revertir los cambios
-      await Promise.all([
-        get().fetchUserFavorites(),
-        get().fetchFavorites()
-      ]);
-      set({ error: 'Error toggling favorite' });
+      // Si falla, revertir los cambios silenciosamente
+      if (isCurrentlyFavorite) {
+        set({
+          favorites: [...currentState.favorites],
+          allFavorites: currentState.allFavorites.map(p => 
+            p._id === productId ? { ...p, likes: p.likes + 1 } : p
+          )
+        });
+      } else {
+        set({
+          favorites: currentState.favorites.filter(f => f._id !== productId),
+          allFavorites: currentState.allFavorites.map(p => 
+            p._id === productId ? { ...p, likes: p.likes - 1 } : p
+          )
+        });
+      }
     }
   },
 
