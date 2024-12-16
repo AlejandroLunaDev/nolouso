@@ -45,8 +45,13 @@ export default function Shop() {
   const toggleFilters = () => setIsFilterOpen(prev => !prev);
 
   return (
-    <div className='flex min-h-screen'>
+    <div className='flex min-h-screen mt-20'>
       <main className='flex-1 px-4 py-8'>
+        <nav className="text-sm mb-4">
+          <a href="/" className="text-gray-500 hover:text-gray-700">inicio</a>
+          <span className="mx-2 text-gray-400">&gt;</span>
+          <span className="text-gray-700">shop</span>
+        </nav>
         <ShopHeader onToggleFilters={toggleFilters} />
         <div className='mt-8'>
           <ProductGrid />

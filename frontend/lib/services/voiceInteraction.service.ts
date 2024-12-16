@@ -1,3 +1,4 @@
+
 export class VoiceInteractionService {
   private recognition: SpeechRecognition | null = null;
   private synthesis!: SpeechSynthesis;

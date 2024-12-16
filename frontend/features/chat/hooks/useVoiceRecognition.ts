@@ -15,7 +15,7 @@ export function useVoiceRecognition({ onResult }: UseVoiceRecognitionProps) {
     voiceInteractionService.startListening(
       (text) => {
         setIsListening(false);
-        onResult(text);
+        onResult(text); // Envía el texto al callback al dejar de hablar
       },
       (error) => {
         setError(error);
@@ -34,6 +34,6 @@ export function useVoiceRecognition({ onResult }: UseVoiceRecognitionProps) {
     error,
     startListening,
     stopListening,
-    isSupported: voiceInteractionService.isVoiceSupported()
+    isSupported: voiceInteractionService.isVoiceSupported(),
   };
-} 
+}

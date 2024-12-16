@@ -16,14 +16,13 @@ export function VoiceMode({
   isLoading,
   onStartListening,
   onStopListening,
-  onClose
+  onClose,
 }: VoiceModeProps) {
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-center p-4 border-b">
         <h2 className="font-semibold">Modo Voz</h2>
       </div>
-
       <div className="flex-1 flex flex-col items-center justify-center p-8">
         <VoiceVisualizer isActive={isListening || isLoading} />
         <VoiceControls
@@ -36,4 +35,4 @@ export function VoiceMode({
       </div>
     </div>
   );
-} 
+}
