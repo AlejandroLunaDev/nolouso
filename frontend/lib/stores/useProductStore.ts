@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 interface Product {
   id: string;
+  _id: string;
   title: string;
   price: number;
   description: string;
@@ -12,94 +13,67 @@ interface Product {
   createdAt: string;
 }
 
+interface Pagination {
+  page: number;
+  totalDocs: number;
+  totalPages: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  currentPage: number;
+}
+
 interface ProductStore {
   products: Product[];
   isLoading: boolean;
   error: string | null;
-  
-  // Acciones básicas
-  fetchProducts: () => Promise<void>;
-  getProduct: (id: string) => Promise<Product | null>;
-  updateProduct: (id: string, data: Partial<Product>) => Promise<void>;
-  deleteProduct: (id: string) => Promise<void>;
-  
-  // Estado local
+  pagination: Pagination;
+
+  fetchProducts: (page: number) => Promise<void>;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  setPagination: (pagination: Pagination) => void;
 }
 
 export const useProductStore = create<ProductStore>((set) => ({
   products: [],
   isLoading: false,
   error: null,
+  pagination: {
+    page: 1,
+    totalDocs: 0,
+    totalPages: 0,
+    limit: 10,
+    hasNextPage: false,
+    hasPrevPage: false,
+    currentPage: 1
+  },
 
-  fetchProducts: async () => {
+  fetchProducts: async (page = 1) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch('/api/products');
+      const response = await fetch(`/api/products?page=${page}&limit=4`);
       const data = await response.json();
-      set({ products: data, isLoading: false });
+
+      set({
+        products: data.docs || [],
+        pagination: {
+          page: data.page,
+          totalDocs: data.totalDocs,
+          totalPages: data.totalPages,
+          limit: data.limit,
+          hasNextPage: data.hasNextPage,
+          hasPrevPage: data.hasPrevPage,
+          currentPage: data.page // Actualiza currentPage con el valor correcto
+        },
+        isLoading: false
+      });
     } catch {
       set({ error: 'Error fetching products', isLoading: false });
     }
   },
 
-  getProduct: async (id: string) => {
-    try {
-      const response = await fetch(`/api/products/${id}`);
-      const data = await response.json();
-      return data;
-    } catch {
-      set({ error: 'Error fetching product' });
-      return null;
-    }
-  },
-
-  updateProduct: async (id: string, data: Partial<Product>) => {
-    set({ isLoading: true, error: null });
-    try {
-      const response = await fetch(`/api/products/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      
-      if (!response.ok) throw new Error('Error updating product');
-      
-      // Actualizar el producto en el estado local
-      const updatedProduct = await response.json();
-      set(state => ({
-        products: state.products.map(p => 
-          p.id === id ? updatedProduct : p
-        ),
-      }));
-    } catch {
-      set({ error: 'Error updating product' });
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-
-  deleteProduct: async (id: string) => {
-    set({ isLoading: true, error: null });
-    try {
-      const response = await fetch(`/api/products/${id}`, {
-        method: 'DELETE',
-      });
-      
-      if (!response.ok) throw new Error('Error deleting product');
-      
-      // Eliminar el producto del estado local
-      set(state => ({
-        products: state.products.filter(p => p.id !== id),
-      }));
-    } catch {
-      set({ error: 'Error deleting product' });
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-
   setLoading: (loading: boolean) => set({ isLoading: loading }),
   setError: (error: string | null) => set({ error }),
-})); 
+  setPagination: (pagination: Pagination) => set({ pagination }),
+}));

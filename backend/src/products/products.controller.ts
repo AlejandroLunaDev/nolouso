@@ -58,8 +58,10 @@ export class ProductsController {
 
   @Get()
   @ApiResponse({ status: 200, description: 'Return all products.' })
-  findAll() {
-    return this.productsService.findAll();
+  async findAll(@Req() req: any) {
+    const page = parseInt(req.query.page) || 1; // Página por defecto: 1
+    const limit = parseInt(req.query.limit) || 10; // Límite por defecto: 10
+    return this.productsService.findAll(page, limit);
   }
 
   @Get(':id')
