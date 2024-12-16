@@ -6,6 +6,7 @@ import { FcGoogle } from 'react-icons/fc';
 interface SocialLoginButtonProps {
   provider: 'google';
   onClick: () => void;
+  className?: string;
 }
 
 export function SocialLoginButton({ className }: SocialLoginButtonProps) {

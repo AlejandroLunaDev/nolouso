@@ -3,6 +3,7 @@ import './globals.css';
 import { Suspense } from 'react';
 import { Footer } from '@/layout/footer/Footer';
 import { Navbar } from '@/layout/navbar/Navbar';
+import { ChatBot } from '@/features/chat/ChatBot';
 
 export const metadata: Metadata = {
   title: 'NoLoUso - Marketplace de segunda mano',
@@ -21,10 +22,11 @@ export default function RootLayout({
     <html lang='es' suppressHydrationWarning>
       <body suppressHydrationWarning className='min-h-screen flex flex-col'>
         <Suspense fallback={<div>Loading...</div>}>
-            <Navbar />
-            <main className='flex-grow'>{children}</main>
-            {auth}
-            <Footer />
+          <Navbar />
+          <main className='flex-grow'>{children}</main>
+          {auth}
+          <ChatBot />
+          <Footer />
         </Suspense>
       </body>
     </html>

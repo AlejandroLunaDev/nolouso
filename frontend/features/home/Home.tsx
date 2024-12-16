@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Hero } from './components/Hero';
-import { NewArrivals } from '../products/components/NewArrivals/NewArrivals';
-import { CategoryShowcase } from '../products/components/CategoryShowcase/CategoryShowcase';
-import { FeaturedProducts } from '../products/components/FeaturedProducts/FeaturedProducts';
-import { SpecialOffers } from '../products/components/SpecialOffers/SpecialOffers';
+import { Hero } from './sections/Hero/Hero';
+import { NewArrivals } from './sections/NewArrivals/NewArrivals';
+import { CategoryShowcase } from './sections/CategoryShowcase/CategoryShowcase';
+import { FeaturedProducts } from './sections/FeaturedProducts/FeaturedProducts';
+import { SpecialOffers } from './sections/SpecialOffers/SpecialOffers';
 import { FavoritesCarousel } from '../favorites/FavoritesCarousel/FavoritesCarousel';
 
 export default function Home() {

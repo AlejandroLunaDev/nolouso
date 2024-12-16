@@ -1,6 +1,6 @@
 'use client';
 
-import { navlinks } from '@/lib/config/navLInks';
+import { navlinks } from '@/config/navLInks';
 import { Logo } from '../components/Logo';
 import NavLinks from '../components/NavLinks';
 import { NavbarMobile } from '../components/NavbarMobile';

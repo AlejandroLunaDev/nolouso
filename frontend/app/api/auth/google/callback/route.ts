@@ -18,8 +18,9 @@ export async function GET(req: NextRequest) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 15 * 60 // 15 minutos
+    maxAge: 60 * 60 // 1 hora
   });
+
 
   response.cookies.set("refreshToken", refreshToken, {
     httpOnly: true,
