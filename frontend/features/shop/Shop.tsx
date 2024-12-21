@@ -7,6 +7,7 @@ import { ShopHeader } from './components/ShopHeader';
 import { ProductGrid } from './components/ProductGrid';
 import { FilterSidebar } from './components/FilterSidebar';
 import { Pagination } from './components/Pagination'; 
+import Link from 'next/link';
 
 export default function Shop() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -51,12 +52,12 @@ export default function Shop() {
   };
 
   return (
-    <div className='flex min-h-screen mt-20'>
+    <div className='flex min-h-screen pt-28 bg-black/90'>
       <main className='flex-1 px-4 py-8'>
-        <nav className="text-sm mb-4">
-          <a href="/" className="text-gray-500 hover:text-gray-700">inicio</a>
+        <nav className="text-sm mb-4 text-white">
+          <Link href="/" className="">inicio</Link>
           <span className="mx-2 text-gray-400">&gt;</span>
-          <span className="text-gray-700">shop</span>
+          <span className="">shop</span>
         </nav>
         <ShopHeader onToggleFilters={toggleFilters} />
         <div className='mt-8'>

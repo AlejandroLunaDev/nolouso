@@ -30,9 +30,9 @@ export function SpecialOffers() {
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6'>
         {specialOffers.map(product => (
           <ProductCard
-            key={product.id}
+            key={product._id}
             product={{
-              id: product.id,
+              id: product._id,
               name: product.title,
               price: product.price,
               imageUrl: product.thumbnails[0],

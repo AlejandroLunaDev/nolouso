@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useAuthStore } from '@/lib/stores/useAuthStore';  // Asegúrate de que la ruta sea correcta
 import { navlinks } from '@/config/navLInks';
 import { Logo } from '../components/Logo';
 import NavLinks from '../components/NavLinks';
@@ -8,6 +10,12 @@ import { UserLogin } from '@/features/auth/components/UserLogin';
 import { FavoritesMenu } from '@/features/favorites/FavoritesMenu';
 
 export function Navbar() {
+ // Usamos el store para obtener la función checkAuth
+
+ useEffect(() => {
+  useAuthStore.getState().checkAuth();
+}, []); // Se ejecutará cada vez que el Navbar se renderice
+
   return (
     <header className='fixed w-full bg-black/50 backdrop-blur-md border-b border-white/10 p-4 lg:p-6 z-40'>
       <div className='flex items-center justify-between'>

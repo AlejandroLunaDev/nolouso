@@ -38,8 +38,9 @@ export function NewArrivals() {
               id: product._id,
               name: product.title,
               price: product.price,
-              imageUrl: product.thumbnails[0]
+              imageUrl: product.thumbnails[0],
             }}
+            
             variant='compact'
           />
         ))}

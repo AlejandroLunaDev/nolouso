@@ -20,8 +20,8 @@ export function FilterSidebar({
 }: FilterSidebarProps) {
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-[300px]">
-        <SheetHeader>
+      <SheetContent side="right" className="w-[300px] ">
+        <SheetHeader >
           <SheetTitle>Filtros</SheetTitle>
         </SheetHeader>
         <div className="space-y-6 py-4">

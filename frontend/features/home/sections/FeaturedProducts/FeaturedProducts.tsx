@@ -30,9 +30,9 @@ export function FeaturedProducts() {
       <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
         {featuredProducts.map(product => (
           <ProductCard
-            key={product.id}
+            key={product._id}
             product={{
-              id: product.id,
+              id: product._id,
               name: product.title,
               price: product.price,
               imageUrl: product.thumbnails[0]

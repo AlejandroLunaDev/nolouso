@@ -54,7 +54,7 @@ export class VoiceInteractionService {
         }
       } else {
         // Feedback para resultados intermedios
-        console.log('Escuchando:', result[0].transcript);
+
       }
     };
 

@@ -3,16 +3,16 @@
 import { Button } from '@/common/ui/button';
 import { Heart } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { useFavoritesStore } from '@/lib/stores/useFavoritesStore';
 import { useEffect } from 'react';
 import { useAuthStore } from '@/lib/stores/useAuthStore';
+import Image from 'next/image';
+import { useProductStore } from '@/lib/stores/useProductStore';
 
 export function FavoritesMenu() {
   const { user } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { favorites, fetchUserFavorites, isLoading } = useFavoritesStore();
-
+  const { favorites, fetchUserFavorites, isLoading } = useProductStore();
   useEffect(() => {
     if (user) {
       fetchUserFavorites();
@@ -49,11 +49,11 @@ export function FavoritesMenu() {
             <div className='max-h-96 overflow-y-auto'>
               {favorites.map(product => (
                 <div
-                  key={product.id}
+                  key={product._id}
                   className='flex items-center gap-3 px-4 py-2 hover:bg-accent/50 transition-colors'
                 >
                   <div className='relative h-10 w-10 rounded overflow-hidden'>
-                    <img
+                    <Image
                       src={product.thumbnails[0] || ''}
                       alt={product.title}
                       className='object-cover h-full w-full'

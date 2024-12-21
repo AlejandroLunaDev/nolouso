@@ -6,7 +6,8 @@ export async function GET() {
       `${process.env.NEXT_PUBLIC_API_URL}/products/favorites`,
       {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
         }
       }
     );

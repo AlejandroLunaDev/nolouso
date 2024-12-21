@@ -7,6 +7,8 @@ const nextConfig = {
           'res.cloudinary.com', // si usas Cloudinary
           'storage.googleapis.com', // si usas Google Cloud Storage
           'lh3.googleusercontent.com',
+          'images.unsplash.com',
+          'fakestoreapi.com'
     
        
         ],

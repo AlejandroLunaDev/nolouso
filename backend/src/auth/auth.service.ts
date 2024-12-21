@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -51,10 +52,21 @@ export class AuthService {
     };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
-
+    const isProd = process.env.NODE_ENV === 'production';
     // Establece las cookies
-    res.cookie('accessToken', accessToken, { httpOnly: true, secure: false });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: false });
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true, // No se puede acceder desde el frontend
+      secure: isProd, // Solo en HTTPS
+      sameSite: 'lax', // Asegura que la cookie se envíe en solicitudes de origen cruzado
+      maxAge: 60 * 60 * 1000, // 1 hora
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
+    });
 
     return { message: 'Inicio de sesión exitoso' };
   }
@@ -95,5 +107,14 @@ export class AuthService {
     res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: false });
 
     return { message: 'Inicio de sesión con Google exitoso' };
+  }
+
+  async checkAuth(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token); // Verificamos y decodificamos el token
+      return decoded; // Devolvemos el payload del token
+    } catch {
+      throw new UnauthorizedException('Token inválido o expirado');
+    }
   }
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { voiceInteractionService } from '@/lib/services/voiceInteraction.service';
 
@@ -15,7 +17,7 @@ export function useVoiceRecognition({ onResult }: UseVoiceRecognitionProps) {
     voiceInteractionService.startListening(
       (text) => {
         setIsListening(false);
-        onResult(text); // Envía el texto al callback al dejar de hablar
+        onResult(text);
       },
       (error) => {
         setError(error);

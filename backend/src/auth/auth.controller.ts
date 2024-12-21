@@ -9,6 +9,7 @@ import {
   UseGuards,
   Redirect,
   Res,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
@@ -52,5 +53,21 @@ export class AuthController {
 
     // Redirige al frontend con los tokens en las cookies
     return { url: 'http://localhost:3000' };
+  }
+
+  @Get('check')
+  async checkAuth(@Req() req: any, @Res() res: Response) {
+    const token = req.cookies['accessToken'];
+
+    if (!token) {
+      throw new UnauthorizedException('Token no proporcionado');
+    }
+
+    try {
+      const user = await this.authService.checkAuth(token); // Pasamos el token al servicio para verificar
+      return res.status(200).json(user); // Si el token es válido, devolvemos el usuario
+    } catch {
+      return res.status(401).json({ message: 'Token inválido o expirado' });
+    }
   }
 }

@@ -2,6 +2,7 @@
 
 import { Button } from '@/common/ui/button';
 import { FcGoogle } from 'react-icons/fc';
+import { useAuthStore } from '@/lib/stores/useAuthStore';
 
 interface SocialLoginButtonProps {
   provider: 'google';
@@ -10,8 +11,9 @@ interface SocialLoginButtonProps {
 }
 
 export function SocialLoginButton({ className }: SocialLoginButtonProps) {
+  const { googleLogin } = useAuthStore();
   const handleLogin = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google/redirect`;
   };
 
   return (

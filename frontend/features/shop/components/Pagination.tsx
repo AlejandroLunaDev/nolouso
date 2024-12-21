@@ -1,6 +1,6 @@
 import { Button } from '@/common/ui/button';
-import { PaginationProps } from './types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { PaginationProps } from '../types';
 
 export const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) => {
   const isPrevDisabled = currentPage === 1;

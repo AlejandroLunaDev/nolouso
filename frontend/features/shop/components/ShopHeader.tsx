@@ -14,7 +14,7 @@ export const ShopHeader = memo(function ShopHeader({ onToggleFilters }: ShopHead
       <div className="flex items-center justify-between gap-4">
         <SearchBar />
         <Button
-          variant="outline"
+          variant="default"
           onClick={onToggleFilters}
           className="flex items-center gap-2 whitespace-nowrap"
         >

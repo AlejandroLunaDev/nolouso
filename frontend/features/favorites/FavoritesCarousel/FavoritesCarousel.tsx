@@ -7,7 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious
 } from '@/common/ui/carousel';
-import { useFavoritesStore } from '@/lib/stores/useFavoritesStore';
+import { useProductStore } from '@/lib/stores/useProductStore'; // Cambiar aquí para usar el store unificado
 import { useAuthStore } from '@/lib/stores/useAuthStore';
 import { useEffect } from 'react';
 import { ProductCard } from '../../products/ProductCard/ProductCard';
@@ -18,20 +18,19 @@ import { FavoritesCarouselSkeleton } from './FavoritesCarouselSkeleton';
 
 export function FavoritesCarousel() {
   const {
-    allFavorites,
-    favorites,
+    allFavorites, // Ahora proviene del store unificado
+    favorites, // Lista de favoritos del usuario
     fetchFavorites,
     fetchUserFavorites,
     toggleFavorite,
     isLoading
-  } = useFavoritesStore();
-
+  } = useProductStore(); // Usar el store de productos unificado
   const { user } = useAuthStore();
 
   useEffect(() => {
-    fetchFavorites();
+    fetchFavorites(); // Obtiene todos los favoritos (debe traer los productos favoritos)
     if (user) {
-      fetchUserFavorites();
+      fetchUserFavorites(); // Obtiene los favoritos específicos del usuario
     }
   }, [fetchFavorites, fetchUserFavorites, user]);
 
@@ -72,7 +71,7 @@ export function FavoritesCarousel() {
                     price: product.price,
                     imageUrl: product.thumbnails[0]
                   }}
-                  onAction={() => toggleFavorite(product._id)}
+                  onAction={() => toggleFavorite(product._id)} // Acción de favorito
                   actionIcon={
                     <Heart
                       size={18}
